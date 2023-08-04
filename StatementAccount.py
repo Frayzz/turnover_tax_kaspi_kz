@@ -1,6 +1,6 @@
 from openpyxl import load_workbook
 
-# Load in the workbook
+# Подключение вебхука с путем на файл
 wb = load_workbook('выписка.xlsx')
 
 # печатаем список листов
