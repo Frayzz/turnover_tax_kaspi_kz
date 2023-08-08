@@ -50,3 +50,4 @@ def format_number(number):
 
 if __name__ == "__main__":
     main()
+
