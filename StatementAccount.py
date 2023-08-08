@@ -1,48 +1,52 @@
 from openpyxl import load_workbook
-
-# Load in the workbook
-wb = load_workbook('выписка.xlsx')
-
-# печатаем список листов
-sheets = wb.sheetnames
-for sheet in sheets:
-    print(sheet)
-
-sheet = wb.active
-
-debet_sum = 0
-return_sum = 0
-index = 0
-for i in sheet.values:
-    index += 1
-    if (i[1] != 'Итого обороты в валюте счета'):
-        # Дебет
-        if (isinstance(i[2], float) or isinstance(i[2], int)):
-            if (index >= 14):
-                if ('Возврат' in i[8]):
-                    return_sum+=i[2]
-        # Кредит
-        if (isinstance(i[3], float) or isinstance(i[3], int)):
-            if (index >= 14):
-                print(index)
-                print(i[3])
-                if ('Возврат' in i[8]):
-                    print('Возврат')
-                else:
-                    debet_sum += i[3]
-    else:
-        break
+from numbers import Number
 
 
-deduction_returns = debet_sum - return_sum
-three_percent_tax = deduction_returns * 0.03
+def main():
+    wb = load_workbook(
+        'C:/Users/nurgaliyev.ar/Desktop/Выписка_по_счету_KZ92_2605..xlsx (2).xlsx')
+    sheets = wb.sheetnames
 
-debet_sum = '{0:,}'.format(debet_sum).replace(',', ' ')
-return_sum = '{0:,}'.format(return_sum).replace(',', ' ')
-deduction_returns = '{0:,}'.format(deduction_returns).replace(',', ' ')
-three_percent_tax = '{0:,}'.format(three_percent_tax).replace(',', ' ')
+    for sheet_name in sheets:
+        print(sheet_name)
 
-print(f'Итого оборота: {debet_sum}тг')
-print(f'Возвраты на сумму: {return_sum}тг')
-print(f'Обороты с вычтенным возвратом: {deduction_returns}тг')
-print(f'Чистые 3%: {three_percent_tax}тг')
+    sheet = wb.active
+
+    debet_sum, return_sum, index = process_sheet(sheet)
+
+    deduction_returns = debet_sum - return_sum
+    three_percent_tax = deduction_returns * 0.03
+
+    print(f'Итого оборота: {format_number(debet_sum)}тг')
+    print(f'Возвраты на сумму: {format_number(return_sum)}тг')
+    print(
+        f'Обороты с вычтенным возвратом: {format_number(deduction_returns)}тг')
+    print(f'Чистые 3%: {format_number(three_percent_tax)}тг')
+
+
+def process_sheet(sheet):
+    debet_sum = 0
+    return_sum = 0
+
+    for index, row in enumerate(sheet.iter_rows(values_only=True), start=1):
+        if row[1] == 'Итого обороты в валюте счета':
+            break
+
+        if index >= 14:
+            if isinstance(row[2], Number):
+                if 'Возврат' in row[8]:
+                    return_sum += row[2]
+
+            if isinstance(row[3], Number):
+                if 'Возврат' not in row[8]:
+                    debet_sum += row[3]
+
+    return debet_sum, return_sum, index
+
+
+def format_number(number):
+    return '{:,}'.format(number).replace(',', ' ')
+
+
+if __name__ == "__main__":
+    main()
