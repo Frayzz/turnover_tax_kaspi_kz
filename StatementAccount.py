@@ -4,7 +4,7 @@ from numbers import Number
 
 def main():
     wb = load_workbook(
-        'C:/Users/nurgaliyev.ar/Desktop/Выписка_по_счету_KZ92_2605..xlsx (2).xlsx')
+        'Выписка_по_счету.xlsx')
     sheets = wb.sheetnames
 
     for sheet_name in sheets:
